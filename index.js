@@ -17,17 +17,19 @@ async function getPrice(url) {
     const { data } = await axios.get(url, { headers });
     const $ = cheerio.load(data);
 
-    // ★ Switch の価格構造に完全対応
+    // ★ Amazon の価格構造（whole / decimal / fraction）を完全に再構築
     const whole = $("span.a-price-whole").first().text().trim();
+    const decimal = $("span.a-price-decimal").first().text().trim(); // ← "." が入る
     const fraction = $("span.a-price-fraction").first().text().trim();
 
     let price = null;
 
     if (whole) {
-      price = `${whole}${fraction ? "." + fraction : ""}`;
+      // 小数点があれば結合、なければ整数だけ
+      price = `${whole}${decimal || ""}${fraction || ""}`;
     }
 
-    // 既存の Amazon セレクタも fallback として残す
+    // fallback（他の Amazon ページ用）
     price =
       price ||
       $("#corePrice_feature_div .a-offscreen").first().text().trim() ||
