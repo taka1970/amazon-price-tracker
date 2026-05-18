@@ -4,12 +4,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "npx playwright install --with-deps"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
-    "express": "^5.2.1",
-    "playwright": "^1.60.0",
-    "prisma": "^6.19.3"
+    "prisma": "^6.19.3",
+    "playwright": "^1.44.0"
   }
 }
