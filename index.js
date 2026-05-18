@@ -21,12 +21,12 @@ async function getPrice(url) {
 
     let price = null;
 
-    // ★ 小数点は1回だけ入れる（ここが最重要）
+    // ★ 小数点は1回だけ入れる
     if (whole) {
       price = fraction ? `${whole}.${fraction}` : whole;
     }
 
-    // fallback は「price が null のときだけ」使う
+    // ★ fallback は「price が null のときだけ」実行する
     if (!price) {
       price =
         $("#corePrice_feature_div .a-offscreen").first().text().trim() ||
