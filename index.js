@@ -1,5 +1,9 @@
+import express from "express";
 import axios from "axios";
 import * as cheerio from "cheerio";
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Amazon の価格を取得する関数
 async function getPrice(url) {
@@ -10,13 +14,9 @@ async function getPrice(url) {
       "Accept-Language": "ja-JP,ja;q=0.9",
     };
 
-    // Amazon の HTML を取得
     const { data } = await axios.get(url, { headers });
-
-    // HTML を解析
     const $ = cheerio.load(data);
 
-    // Amazon の価格セレクタ（複数パターン対応）
     const price =
       $("#corePrice_feature_div .a-offscreen").first().text().trim() ||
       $("#priceblock_ourprice").text().trim() ||
@@ -30,10 +30,16 @@ async function getPrice(url) {
   }
 }
 
-// ★あなたが送ってくれた実在する URL（これでOK）
+// ★あなたの URL
 const url = "https://www.amazon.co.jp/dp/B07SVXHD1P";
 
-// 実行
-getPrice(url).then((price) => {
-  console.log("現在の価格:", price);
+// Web サーバーのルート
+app.get("/", async (req, res) => {
+  const price = await getPrice(url);
+  res.send(`現在の価格: ${price}`);
+});
+
+// サーバー起動（Render がこれを待っている）
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
