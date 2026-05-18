@@ -9,6 +9,7 @@
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "prisma": "^6.19.3",
-    "playwright-core": "^1.44.0"
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12"
   }
 }
