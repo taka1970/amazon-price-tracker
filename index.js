@@ -30,8 +30,8 @@ async function getPrice(url) {
   }
 }
 
-// ★ここに正しい Amazon 商品 URL を入れる（404 だと Render が failed になる）
-const url = "https://www.amazon.co.jp/dp/B0D1LZQJ4Z"; // ← 例：Switch の実在する URL
+// ★あなたが送ってくれた実在する URL（これでOK）
+const url = "https://www.amazon.co.jp/dp/B07SVXHD1P";
 
 // 実行
 getPrice(url).then((price) => {
