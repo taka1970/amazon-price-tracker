@@ -17,8 +17,10 @@ async function getPrice(url) {
     const { data } = await axios.get(url, { headers });
     const $ = cheerio.load(data);
 
+    // ★ Switch 商品ページ対応（a-price-whole）
     const price =
       $("#corePrice_feature_div .a-offscreen").first().text().trim() ||
+      $("span.a-price-whole").first().text().trim() ||
       $("#priceblock_ourprice").text().trim() ||
       $("#priceblock_dealprice").text().trim() ||
       null;
@@ -30,7 +32,7 @@ async function getPrice(url) {
   }
 }
 
-// ★あなたの URL
+// ★あなたの Switch の URL（dp/B07SVXHD1P）
 const url = "https://www.amazon.co.jp/dp/B07SVXHD1P";
 
 // Web サーバーのルート
@@ -39,7 +41,7 @@ app.get("/", async (req, res) => {
   res.send(`現在の価格: ${price}`);
 });
 
-// サーバー起動
+// サーバー起動（Render がこれを待っている）
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
