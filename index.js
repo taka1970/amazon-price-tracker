@@ -39,7 +39,7 @@ app.get("/", async (req, res) => {
   res.send(`現在の価格: ${price}`);
 });
 
-// サーバー起動（Render がこれを待っている）
+// サーバー起動
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
