@@ -5,7 +5,6 @@ import * as cheerio from "cheerio";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Amazon の価格を取得する関数
 async function getPrice(url) {
   try {
     const headers = {
@@ -17,19 +16,17 @@ async function getPrice(url) {
     const { data } = await axios.get(url, { headers });
     const $ = cheerio.load(data);
 
-    // ★ Amazon の価格構造（whole / decimal / fraction）を完全に再構築
     const whole = $("span.a-price-whole").first().text().trim();
-    const decimal = $("span.a-price-decimal").first().text().trim(); // ← "." が入る
     const fraction = $("span.a-price-fraction").first().text().trim();
 
     let price = null;
 
+    // ★ 小数点を1回だけ入れる
     if (whole) {
-      // 小数点があれば結合、なければ整数だけ
-      price = `${whole}${decimal || ""}${fraction || ""}`;
+      price = fraction ? `${whole}.${fraction}` : whole;
     }
 
-    // fallback（他の Amazon ページ用）
+    // fallback
     price =
       price ||
       $("#corePrice_feature_div .a-offscreen").first().text().trim() ||
@@ -44,16 +41,13 @@ async function getPrice(url) {
   }
 }
 
-// ★あなたの Switch の URL
 const url = "https://www.amazon.co.jp/dp/B07SVXHD1P";
 
-// Web サーバーのルート
 app.get("/", async (req, res) => {
   const price = await getPrice(url);
   res.send(`現在の価格: ${price}`);
 });
 
-// サーバー起動
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
