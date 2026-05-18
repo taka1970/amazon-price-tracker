@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Amazon 価格推移グラフ（複数商品対応）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .card {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    canvas {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Amazon 価格推移（複数商品）</h1>
+
+  <div class="card">
+    <canvas id="chart" height="120"></canvas>
+  </div>
+
+  <script>
+    async function loadData() {
+      const res = await fetch('/history');
+      const data = await res.json();
+
+      // 商品名ごとにグループ化
+      const grouped = {};
+      data.forEach(item => {
+        if (!grouped[item.title]) grouped[item.title] = [];
+        grouped[item.title].push(item);
+      });
+
+      // 色パレット
+      const colors = [
+        '#007bff', '#e83e8c', '#28a745', '#fd7e14',
+        '#6f42c1', '#20c997', '#dc3545', '#17a2b8'
+      ];
+
+      const datasets = [];
+      let colorIndex = 0;
+
+      for (const title in grouped) {
+        const items = grouped[title];
+
+        datasets.push({
+          label: title,
+          data: items.map(d => ({ x: new Date(d.createdAt), y: d.price })),
+          borderColor: colors[colorIndex % colors.length],
+          backgroundColor: colors[colorIndex % colors.length] + '33',
+          borderWidth: 3,
+          tension: 0.25,
+          fill: false
+        });
+
+        colorIndex++;
+      }
+
+      new Chart(document.getElementById('chart'), {
+        type: 'line',
+        data: { datasets },
+        options: {
+          responsive: true,
+          parsing: false,
+          scales: {
+            x: {
+              type: 'time',
+              time: { unit: 'day' },
+              ticks: { color: '#333' }
+            },
+            y: {
+              ticks: { color: '#333' }
+            }
+          }
+        }
+      });
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
