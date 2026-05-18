@@ -21,18 +21,19 @@ async function getPrice(url) {
 
     let price = null;
 
-    // ★ 小数点を1回だけ入れる
+    // ★ 小数点は1回だけ入れる（ここが最重要）
     if (whole) {
       price = fraction ? `${whole}.${fraction}` : whole;
     }
 
-    // fallback
-    price =
-      price ||
-      $("#corePrice_feature_div .a-offscreen").first().text().trim() ||
-      $("#priceblock_ourprice").text().trim() ||
-      $("#priceblock_dealprice").text().trim() ||
-      null;
+    // fallback は「price が null のときだけ」使う
+    if (!price) {
+      price =
+        $("#corePrice_feature_div .a-offscreen").first().text().trim() ||
+        $("#priceblock_ourprice").text().trim() ||
+        $("#priceblock_dealprice").text().trim() ||
+        null;
+    }
 
     return price || "価格が取得できませんでした";
   } catch (error) {
